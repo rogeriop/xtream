@@ -23,12 +23,12 @@ public class CompraTest {
 				"  <produtos>\n" +
 				"    <produto codigo=\"1587\">\n"	+ 
 				"      <nome>geladeira</nome>\n" + 
-				"      <preco>1000.0</preco>\n"	+ 
+				"      <preco>R$ 1.000,00</preco>\n"	+ 
 				"      <descrição>geladeira duas portas</descrição>\n"	+ 
 				"    </produto>\n" + 
 				"    <produto codigo=\"1588\">\n"	+ 
 				"      <nome>ferro de passar</nome>\n" + 
-				"      <preco>100.0</preco>\n" + 
+				"      <preco>R$ 100,00</preco>\n" + 
 				"      <descrição>ferro com vaporizador</descrição>\n"	+ 
 				"    </produto>\n" + 
 				"  </produtos>\n" +
@@ -62,7 +62,7 @@ public class CompraTest {
 
 		Compra compraEsperada = compraDeGeladeiraEFerro();
 		
-		XStream xstream = xstreamParaCompraEProduto();
+		XStream xstream = xstreamParaDesserializarCompraEProduto();
 		
 		Compra compraResultado = (Compra) xstream.fromXML(xmlDeOrigem);
 		assertEquals(compraEsperada, compraResultado);
@@ -78,12 +78,12 @@ public class CompraTest {
 	            + "  <produtos>\n" 
 	            + "    <produto codigo=\"1587\">\n"
 	            + "      <nome>geladeira</nome>\n"
-	            + "      <preco>1000.0</preco>\n"
+	            + "      <preco>R$ 1.000,00</preco>\n"
 	            + "      <descrição>geladeira duas portas</descrição>\n"
 	            + "    </produto>\n"
 	            + "    <produto codigo=\"1587\">\n"
 	            + "      <nome>geladeira</nome>\n"
-	            + "      <preco>1000.0</preco>\n"
+	            + "      <preco>R$ 1.000,00</preco>\n"
 	            + "      <descrição>geladeira duas portas</descrição>\n"
 	            + "    </produto>\n"
 	            + "  </produtos>\n" 
@@ -106,12 +106,12 @@ public class CompraTest {
 				"  <id>15</id>\n" +
 				"  <produto codigo=\"1587\">\n"	+ 
 				"    <nome>geladeira</nome>\n" + 
-				"    <preco>1000.0</preco>\n"	+ 
+				"    <preco>R$ 1.000,00</preco>\n"	+ 
 				"    <descrição>geladeira duas portas</descrição>\n"	+ 
 				"  </produto>\n" + 
 				"  <produto codigo=\"1588\">\n"	+ 
 				"    <nome>ferro de passar</nome>\n" + 
-				"    <preco>100.0</preco>\n" + 
+				"    <preco>R$ 100,00</preco>\n" + 
 				"    <descrição>ferro com vaporizador</descrição>\n"	+ 
 				"  </produto>\n" + 
 				"</compra>";
@@ -134,12 +134,12 @@ public class CompraTest {
 	            + "  <produtos class=\"linked-list\">\n" 
 	            + "    <livro codigo=\"1589\">\n"
 	            + "      <nome>O Pássaro Raro</nome>\n"
-	            + "      <preco>100.0</preco>\n"
+	            + "      <preco>R$ 100,00</preco>\n"
 	            + "      <descrição>dez histórias</descrição>\n"
 	            + "    </livro>\n"
 	            + "    <musica codigo=\"1590\">\n"
 	            + "      <nome>Meu Passeio</nome>\n"
-	            + "      <preco>100.0</preco>\n"
+	            + "      <preco>R$ 100,00</preco>\n"
 	            + "      <descrição>música</descrição>\n"
 	            + "    </musica>\n"
 	            + "  </produtos>\n" 
@@ -154,6 +154,18 @@ public class CompraTest {
 	}
 	
 	private XStream xstreamParaCompraEProduto() {
+		XStream xstream = new XStream();
+		xstream.alias("produto", Produto.class);
+		xstream.alias("compra", Compra.class);
+		xstream.alias("livro", Livro.class);
+		xstream.alias("musica", Musica.class);
+		xstream.aliasField("descrição", Produto.class, "descricao");
+		xstream.useAttributeFor(Produto.class, "codigo");
+		xstream.registerLocalConverter(Produto.class, "preco", new PrecoConverter());
+		return xstream;
+	}
+
+	private XStream xstreamParaDesserializarCompraEProduto() {
 		XStream xstream = new XStream();
 		xstream.alias("produto", Produto.class);
 		xstream.alias("compra", Compra.class);
