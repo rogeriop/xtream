@@ -152,6 +152,44 @@ public class CompraTest {
 // APESAR DO EXERCÍCIO ESTÁ IGUAL AO DO VÍDEO, NÃO ESTÁ GERANDO CORRETAMENTE
 // O XML COM HERANÇA		
 	}
+
+	@Test
+	public void deveUsarUmConversorDiferente() {
+
+        String xmlEsperado = "<compra estilo=\"novo\">\n" 
+                + "  <id>15</id>\n"
+                + "  <fornecedor>guilherme.silveira@caelum.com.br</fornecedor>\n"
+                + "  <endereco>\n"
+                + "    <linha1>Rua Vergueiro 3185</linha1>\n"
+                + "    <linha2>8 andar - Sao Paulo - SP</linha2>\n"
+                + "  </endereco>\n"
+                + "  <produtos>\n" 
+                + "    <produto codigo=\"1587\">\n"
+                + "      <nome>geladeira</nome>\n"
+                + "      <preco>1000.0</preco>\n"
+                + "      <descrição>geladeira duas portas</descrição>\n"
+                + "    </produto>\n"
+                + "    <produto codigo=\"1587\">\n"
+                + "      <nome>geladeira</nome>\n"
+                + "      <preco>1000.0</preco>\n"
+                + "      <descrição>geladeira duas portas</descrição>\n"
+                + "    </produto>\n"
+                + "  </produtos>\n" 
+                + "</compra>";
+        
+		Compra compra = compraDuasGeladeirasIguais();
+
+		XStream xstream = xstreamParaDesserializarCompraEProduto();
+		xstream.registerConverter(new CompraDiferenteConverter());
+		xstream.setMode(XStream.NO_REFERENCES);
+
+		String xmlGerado = xstream.toXML(compra);
+
+		assertEquals(xmlEsperado, xmlGerado);
+		
+		Compra deserializada = (Compra) xstream.fromXML(xmlGerado);
+		assertEquals(compra, deserializada);
+	}
 	
 	private XStream xstreamParaCompraEProduto() {
 		XStream xstream = new XStream();

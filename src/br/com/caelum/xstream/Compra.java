@@ -41,6 +41,14 @@ public class Compra {
 			return false;
 		return true;
 	}
+
+	public int getId() {
+		return this.id;
+	}
+
+	public List<Produto> getProdutos() {
+		return this.produtos;
+	}
 	
 
 }
